@@ -1,6 +1,6 @@
 // Write your JavaScript code here!
 
-const { pickPlanet, myFetch } = require("./scriptHelper");
+// const { pickPlanet, myFetch } = require("./scriptHelper");
 
 window.addEventListener("load", function () {
   let form = document.querySelector("form");
@@ -18,25 +18,37 @@ window.addEventListener("load", function () {
     ) {
       window.alert("All fields are required!");
     } else {
-      formSubmission(document, {
-        pilotName: pilotNameInput.value,
-        copilotName: copilotNameInput.value,
-        fuelLevel: fuelLevelInput.value,
-        cargoMass: cargoMassInput.value,
-      });
+      formSubmission(
+        document,
+        "",
+        pilotNameInput.value,
+        copilotNameInput.value,
+        fuelLevelInput.value,
+        cargoMassInput.value
+      );
     }
   });
 
   let listedPlanets;
   // Set listedPlanetsResponse equal to the value returned by calling myFetch() --v
   let listedPlanetsResponse = myFetch();
-  listedPlanetsResponse.then(function (result) {
-      listedPlanets = result;
+  listedPlanetsResponse
+    .then(function (response) {
+      listedPlanets = response;
       console.log(listedPlanets);
-  }).then(function () {
+    })
+    .then(function () {
       console.log(listedPlanets);
-      pickPlanet()
-//   Below this comment call the appropriate helper functions to pick a planet fom the list of planets and add that information to your destination.
-  })
-
+      //   Below this comment call the appropriate helper functions to pick a planet fom the list of planets and add that information to your destination.
+      let planet = pickPlanet(listedPlanets);
+      addDestinationInfo(
+        document,
+        planet.name,
+        planet.diameter,
+        planet.star,
+        planet.distance,
+        planet.moons,
+        planet.image
+      );
+    });
 });

@@ -1,6 +1,6 @@
 // Write your helper functions here!
 
-// require("cross-fetch/polyfill");
+require("cross-fetch/polyfill");
 
 // put the validation code for input here
 
@@ -39,17 +39,23 @@ function addDestinationInfo(
 }
 
 function validateInput(testInput) {
-  if (isNaN(testInput)) {
-    if (testInput === "") {
-      return "Empty";
-    }
+  if (testInput === "") {
+    return "Empty";
+  } else if (isNaN(testInput)) {
     return "Not a Number";
   } else {
     return "Is a Number";
   }
 }
 
-function formSubmission(document, input) {
+function formSubmission(
+  document,
+  list,
+  pilotName,
+  copilotName,
+  fuelLevel,
+  cargoMass
+) {
   //  Make sure to call your formSubmission() function at the appropriate time in your script.js file!
 
   let faultyItems = document.querySelector("#faultyItems");
@@ -61,56 +67,48 @@ function formSubmission(document, input) {
   let pilotStatus = document.querySelector("#pilotStatus");
   let copilotStatus = document.querySelector("#copilotStatus");
 
-  pilotStatus.innerHTML = `Pilot ${input.pilotName} is ready for launch`;
-  copilotStatus.innerHTML = `Copilot ${input.copilotName} is ready for launch`;
+  pilotStatus.innerHTML = `Pilot ${pilotName} is ready for launch`;
+  copilotStatus.innerHTML = `Co-pilot ${copilotName} is ready for launch`;
+  cargoStatus.innerHTML = "Cargo mass low enough for launch";
+  fuelStatus.innerHTML = "Fuel level high enough for launch";
 
   let hasError = false;
 
-  if (validateInput(input.pilotName) === "Is a Number") {
+  if (validateInput(pilotName) === "Is a Number") {
     hasError = true;
-    pilotStatus.innerHTML = `Pilot is not ready for launch`;
-    launchStatus.innerHTML = "Shuttle not ready for launch";
-    launchStatus.style.color = "red";
+    pilotStatus.innerHTML = `Pilot is Not Ready for Launch`;
   }
-  if (validateInput(input.copilotName) === "Is a Number") {
+  if (validateInput(copilotName) === "Is a Number") {
     hasError = true;
-    copilotStatus.innerHTML = `Copilot is not ready for launch`;
-    launchStatus.innerHTML = "Shuttle not ready for launch";
-    launchStatus.style.color = "red";
+    copilotStatus.innerHTML = `Co-pilot is Not Ready for Launch`;
   }
-  if (validateInput(input.fuelLevel) === "Not a Number") {
+  if (validateInput(fuelLevel) === "Not a Number") {
     hasError = true;
-    launchStatus.innerHTML = "Shuttle not ready for launch";
-    launchStatus.style.color = "red";
   }
 
-  if (input.fuelLevel < 10000) {
+  if (fuelLevel < 10000) {
     hasError = true;
-    fuelStatus.innerHTML = "Fuel Level too low for launch";
-    launchStatus.innerHTML = "Shuttle not ready for launch";
-    launchStatus.style.color = "red";
+    fuelStatus.innerHTML = "Fuel level too low for launch";
   }
 
-  if (validateInput(input.cargoMass) === "Not a Number") {
+  if (validateInput(cargoMass) === "Not a Number") {
     hasError = true;
-    //line for invalid cargo entry, e.g. "K"?
-    launchStatus.innerHTML = "Shuttle not ready for launch";
-    launchStatus.style.color = "red";
   }
 
-  if (input.cargoMass > 10000) {
+  if (cargoMass > 10000) {
     hasError = true;
     cargoStatus.innerHTML = "Cargo mass too heavy for launch";
-    launchStatus.innerHTML = "Shuttle not ready for launch";
-    launchStatus.style.color = "red";
   }
 
-  if (!hasError) {
-    pilotStatus.innerHTML = `Pilot ${input.pilotName} is ready for launch`;
-    copilotStatus.innerHTML = `Copilot ${input.copilotName} is ready for launch`;
+  if (hasError) {
+    launchStatus.innerHTML = "Shuttle Not Ready for Launch";
+    launchStatus.style.color = "red";
+  } else {
+    pilotStatus.innerHTML = `Pilot ${pilotName} is ready for launch`;
+    copilotStatus.innerHTML = `Co-pilot ${copilotName} is ready for launch`;
     cargoStatus.innerHTML = "Cargo mass low enough for launch";
-    fuelStatus.innerHTML = "Fuel Level high enough for launch";
-    launchStatus.innerHTML = "Shuttle is ready for launch";
+    fuelStatus.innerHTML = "Fuel level high enough for launch";
+    launchStatus.innerHTML = "Shuttle is Ready for Launch";
     launchStatus.style.color = "green";
   }
 }
@@ -121,19 +119,15 @@ async function myFetch() {
   planetsReturned = await fetch(
     "https://handlers.education.launchcode.org/static/planets.json"
   ).then(function (response) {
-    response.json().then(function (json) {
-      
-    });
+    return response.json();
   });
-  // per instructions: return response.json() ??
+
   return planetsReturned;
 }
 
 function pickPlanet(planets) {
-  let planets = planetsReturned;
-  for (i = 0; i < planets.length; i++) {
-    Math.random(planetsReturned[i]);
-  }
+  let randomPlanet = Math.floor(Math.random() * planets.length);
+  return planets[randomPlanet];
 }
 
 module.exports.addDestinationInfo = addDestinationInfo;
